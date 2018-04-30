@@ -1,8 +1,7 @@
 language: cpp
 script:
   - cmake .
-  - cmake --build .
-  - cmake --build . --target test
+  - cmake --build . 
   - cmake --build . --target package
 deploy:
   provider: script
