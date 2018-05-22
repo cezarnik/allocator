@@ -8,7 +8,7 @@
 BOOST_AUTO_TEST_CASE(Leaks) {
 	int initial=my::alloc_counter;
 	{	
-		my::my_allocator<int,10> z;
+		my::my_allocator<int,10> alloc;
 		for(int i=0; i<30; ++i){
 			auto pointer = alloc.allocate(1); 
 			BOOST_CHECK(pointer!=nullptr);
