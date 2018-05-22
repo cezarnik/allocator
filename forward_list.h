@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 template <typename T, typename Alloc = allocator<T>>
-class: forward_list{
+class forward_list{
 private:
 	struct Node{
 		shared_ptr<Node> nxt;
