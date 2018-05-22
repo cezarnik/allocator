@@ -8,6 +8,7 @@ endif()
 
 project(allocator VERSION 1.1.${VERSION_BUILD}) 
 
+find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
 add_executable(allocator main.cpp allocator.h forward_list.h )
 
