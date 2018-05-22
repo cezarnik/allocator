@@ -25,8 +25,8 @@ set_target_properties(alloc_test list_test
 	INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}
 )
 
-target_link_libraries(alloc_test list_test ${Boost_LIBRARIES})
-
+target_link_libraries(alloc_test ${Boost_LIBRARIES})
+target_link_libraries(list_test ${Boost_LIBRARIES})
 install(TARGETS allocator RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
