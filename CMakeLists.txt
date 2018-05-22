@@ -11,10 +11,22 @@ project(allocator VERSION 1.1.${VERSION_BUILD})
 
 add_executable(allocator main.cpp allocator.h forward_list.h )
 
-set_target_properties(allocator PROPERTIES 
+add_executable(alloc_test alloc_test.cpp debug.h debug.cpp allocator.h)
+add_executable(list_test list_test.cpp forward_list.h)
+
+
+set_target_properties(allocator alloc_test list_test PROPERTIES 
 	CXX_STANDARD 14
 	CXX_STANDARD_REQUIRED ON
 )
+set_target_properties(alloc_test list_test
+	PROPERTIES
+	COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK
+	INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}
+)
+
+target_link_libraries(alloc_test list_test ${Boost_LIBRARIES})
+
 install(TARGETS allocator RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
@@ -25,4 +37,8 @@ set(CPACK_PACKAGE_CONTACT n.gaivoronskiy@innopolis.ru)
 
 include(CPack)
 
+enable_testing()
+
+add_test(alloc_test alloc_test)
+add_test(list_test list_test)
 

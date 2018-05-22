@@ -2,37 +2,51 @@
 #define H_FORWARD
 #include <memory>
 #include <iostream>
-#include "allocator.h"
 using namespace std;
 template <typename T, typename Alloc = allocator<T>>
-struct forward_list{
-
+class: forward_list{
+private:
 	struct Node{
-		Node * nxt;
+		shared_ptr<Node> nxt;
 		T value;
+		Node():nxt{},value{T()}{}
+		Node(const Node & rhs):nxt(rhs.nxt),value(rhs.value){}
 	};
 	
+	int _size=0;	
+
+	struct Deleter{
+		void operator()(Node * el){}
+	};
+
+	using ptr =shared_ptr<Node>;
 	using allocator_type = typename allocator_traits<Alloc>:: template rebind_alloc<Node>;
 	using traits = allocator_traits<allocator_type>; 
 	
 	allocator_type _allocator;
-	Node * head;
-	Node * tail;
+	ptr head;
+	ptr tail;
 
+public:
 	forward_list(){
-		tail = traits::allocate(_allocator,1);
-		tail->nxt=nullptr;
+		tail = ptr(traits::allocate(_allocator,1),Deleter());
+		tail->nxt=ptr(nullptr);
 		head=tail;
 	} 
+	int size(){
+		return _size;
+	}
 	void append(T & element){
-		Node * new_node = traits::allocate(_allocator,1);
+		ptr new_node(traits::allocate(_allocator,1),Deleter());
+		
 		new_node->nxt=head;
 		new_node->value=element;
 		head = new_node;
+		++_size;
 	}
-	void print(ostream & stream){
+	void print(ostream & stream,string delim=" "){
 		for (auto curr=head; curr!=tail; curr=curr->nxt)
-			stream<<curr->value<<" ";
+			stream<<curr->value<<delim;
 	}
 };
 	

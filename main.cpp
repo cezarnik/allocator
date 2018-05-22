@@ -1,42 +1,42 @@
-#include <iostream>
-#include "allocator.h"
 #include "forward_list.h"
 #include <map>
 #include <utility>
-int fact[100];
-void calculate_factorials(int n){
-	fact[0]=1;
-	for(int i=1; i<=n; ++i)
-		fact[i]=fact[i-1]*i;
+#include <algorithm>
+#include <iterator>
+#include "allocator.h"
+constexpr auto factorial(auto n) -> decltype(n) {
+	return n ? n*factorial(n-1) : 1;
 }
+
 int main(){
-	calculate_factorials(10);
 
+	auto make_factorials = [i=0] () mutable {
+		auto f = factorial(i);
+		auto value = std::make_pair(i,f);
+		++i;
+		return value;
+	};
+	
 	std::map<int,int> mp1;
+	std::generate_n(std::inserter(mp1, std::begin(mp1)), 10, make_factorials);
 
-	for(int i=0; i<10; ++i)
-		mp1[i]=fact[i];
-	
-	for(auto it:mp1)
-		std::cout<<it.second<<" ";
-	std::cout<<std::endl;
-	
+	for (auto it: mp1)
+		std::cout<<it.second<<"\n";
 	
 	std::map<int,int,std::less<int>,my::my_allocator<std::pair<const int,int>,10>> mp2;
-	for(int i=0; i<10; ++i)
-		mp2[i]=fact[i];
+	std::generate_n(std::inserter(mp2, std::begin(mp2)), 10, make_factorials);
+
 	for(auto it:mp2)
-		std::cout<<it.second<<" ";
-	std::cout<<std::endl;
-	
+		std::cout<<it.second<<"\n";
+
+
 	forward_list<int> list1;
 	for(int i=0; i<10; ++i)
 		list1.append(i);
-	list1.print(std::cout);
-	std::cout<<std::endl;
-
+	list1.print(std::cout,"\n");
+	
 	forward_list<int,my::my_allocator<int,10>> list2;
 	for(int i=0; i<10; ++i)
 		list2.append(i);
-	list2.print(std::cout);
+	list2.print(std::cout,"\n");
 }
