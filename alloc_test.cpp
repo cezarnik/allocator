@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(Leaks) {
 
 BOOST_AUTO_TEST_CASE(ChunkCheck) {
 	my::my_allocator<int,15> alloc;
-	int initial=my_alloc_counter;
+	int initial=my::alloc_counter;
 	
 	auto pointer = alloc.allocate(1);
 	BOOST_CHECK(pointer!=nullptr);
