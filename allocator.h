@@ -6,7 +6,6 @@
 #include <utility>
 #include <iostream>
 #include <map>
-#include "debug.h"
 namespace my{
 template <typename T,std::size_t capacity=32>
 class my_allocator{
