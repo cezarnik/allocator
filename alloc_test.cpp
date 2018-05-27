@@ -1,8 +1,6 @@
-#define BOOST_TEST_MODULE alloc_test
-
-#include <boost/test/unit_test.hpp>
-
 #include "debug.h"
+#define BOOST_TEST_MODULE alloc_test
+#include <boost/test/unit_test.hpp>
 #include "allocator.h"
 
 BOOST_AUTO_TEST_CASE(Leaks) {
@@ -23,6 +21,5 @@ BOOST_AUTO_TEST_CASE(ChunkCheck) {
 	
 	auto pointer = alloc.allocate(1);
 	BOOST_CHECK(pointer!=nullptr);
-	BOOST_CHECK(my::alloc_counter==initial+15); //number of preallocated elements
-	
+	BOOST_CHECK(my::alloc_counter==initial+15); //number of preallocated elements	
 }

@@ -6,47 +6,45 @@ using namespace std;
 template <typename T, typename Alloc = allocator<T>>
 class forward_list{
 private:
+	struct Deleter;
 	struct Node{
-		shared_ptr<Node> nxt;
 		T value;
-		Node():nxt{},value{T()}{}
+		unique_ptr<Node,Deleter> nxt;
+		Node():nxt{nullptr},value{T()}{}
 		Node(const Node & rhs):nxt(rhs.nxt),value(rhs.value){}
 	};
-	
-	int _size=0;	
-
 	struct Deleter{
-		void operator()(Node * el){}
-	};
-
-	using ptr =shared_ptr<Node>;
+		void operator()(Node *p){}
+		Deleter(){}
+		Deleter(const Deleter&){}
+		Deleter(Deleter&){}
+		Deleter(Deleter&&){}
+		Deleter & operator = (const Deleter &) = default; 
+	};	
+	int _size=0;	
 	using allocator_type = typename allocator_traits<Alloc>:: template rebind_alloc<Node>;
 	using traits = allocator_traits<allocator_type>; 
 	
 	allocator_type _allocator;
-	ptr head;
-	ptr tail;
+	unique_ptr<Node,Deleter> head;
+	Node * tail = nullptr;
 
 public:
-	forward_list(){
-		tail = ptr(traits::allocate(_allocator,1),Deleter());
-		tail->nxt=ptr(nullptr);
-		head=tail;
-	} 
 	int size(){
 		return _size;
 	}
 	void append(T & element){
-		ptr new_node(traits::allocate(_allocator,1),Deleter());
-		
-		new_node->nxt=head;
+			
+		unique_ptr<Node,Deleter> new_node(_allocator.allocate(1),Deleter());
+
+		new_node->nxt=unique_ptr<Node,Deleter>(head.release());	
 		new_node->value=element;
-		head = new_node;
+		head = std::move(new_node);
 		++_size;
 	}
-	void print(ostream & stream,string delim=" "){
-		for (auto curr=head; curr!=tail; curr=curr->nxt)
-			stream<<curr->value<<delim;
+	void print(ostream * stream,string delim=" "){
+		for (auto curr=head.get(); curr; curr=curr->nxt.get())
+			(*stream)<<curr->value<<delim;
 	}
 };
 	
